@@ -40,6 +40,25 @@ func CreateClientWithCustomEndpoint(ctx context.Context, svcConf *buconfig.Servi
 		},
 	)
 
+	if svcConf.CustomCACert != "" {
+		f, err := os.Open(svcConf.CustomCACert)
+		if err != nil {
+			return nil, fmt.Errorf("error opening file %s: %w", svcConf.CustomCACert, err)
+		}
+		defer f.Close()
+
+		b, err := io.ReadAll(f)
+		if err != nil {
+			return nil, fmt.Errorf("error reading file %s: %w", svcConf.CustomCACert, err)
+		}
+
+		tr := &http.Transport{}
+
+		if ok := tr.TLSClientConfig.RootCAs.AppendCertsFromPEM(b); !ok {
+			return nil, fmt.Errorf("error adding cert to root CAs: %w", err)
+		}
+	}
+
 	client, err := minio.New(endpoint, &minio.Options{
 		Creds:  creds,
 		Secure: useSSL,
