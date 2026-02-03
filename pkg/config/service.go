@@ -20,6 +20,7 @@ type ServiceConfig struct {
 	AgeX25519PublicKey []string `yaml:"ageX25519PublicKey"`
 	EnableCompression  bool     `yaml:"enableCompression"`
 	DisableEncryption  bool     `yaml:"disableEncryption"`
+	CustomCACert       string   `yaml:"customCACert"`
 }
 
 const (
@@ -31,6 +32,7 @@ const (
 	enableCompressionEnvVar  = "ENABLE_COMPRESSION"
 	disableEncryptionEnvVar  = "DISABLE_ENCRYPTION"
 	ageX25519PublicKeyEnvVar = "AGE_X25519_PUBLIC_KEY"
+	customCACert             = "CUSTOM_CA_CERT"
 )
 
 // GetServiceConfig parses the backup service config at path.
@@ -44,5 +46,6 @@ func GetServiceConfig() *ServiceConfig {
 		EnableCompression:  os.Getenv(enableCompressionEnvVar) == "true",
 		DisableEncryption:  os.Getenv(disableEncryptionEnvVar) == "true",
 		AgeX25519PublicKey: strings.Split(os.Getenv(ageX25519PublicKeyEnvVar), ","),
+		CustomCACert:       os.Getenv(customCACert),
 	}
 }
